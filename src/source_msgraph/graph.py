@@ -8,11 +8,13 @@ import asyncio
 from kiota_abstractions.base_request_configuration import RequestConfiguration
 from msgraph.generated.sites.item.lists.item.items.items_request_builder import ItemsRequestBuilder
 import json
-from kiota_serialization_json.json_serialization_writer_factory import JsonSerializationWriterFactory
+
 from msgraph import GraphServiceClient
 from azure.identity import ClientSecretCredential
 
 from source_msgraph.async_interator import AsyncToSyncIterator
+from source_msgraph.msgraph_spark.fetcher import MicrosoftGraphFetcher
+from source_msgraph.msgraph_spark.options import MicrosoftGraphOptions
 
 tenant_id = "7c78a7a0-8b3b-4d54-8c3c-ca6ab4da029f"
 client_id = "59c8283d-4a90-44a9-9a58-579a0e511168"
@@ -24,17 +26,11 @@ credentials = ClientSecretCredential(
 
 # from microsoft.kiota.serialization.json.json_serialization_writer_factory import JsonSerializationWriterFactory
 
-# Convert to JSON using Kiota
-writer_factory = JsonSerializationWriterFactory()
-writer = writer_factory.get_serialization_writer("application/json")
+
 graph_client = GraphServiceClient(credentials=credentials, scopes=[
                                   'https://graph.microsoft.com/.default'])
 
 
-def to_json(value):
-    value.serialize(writer)
-    # Get JSON string
-    return json.loads((writer.get_serialized_content().decode("utf-8")))
 
 
 async def fetch_items_async(graph_client, site_id, list_id, **params):
@@ -58,3 +54,31 @@ async def fetch_items_async(graph_client, site_id, list_id, **params):
 def fetch_items_sync(graph_client, site_id, list_id, params):
     async_gen = fetch_items_async(graph_client, site_id, list_id, **params)
     return AsyncToSyncIterator(async_gen)
+
+
+def main():
+    options = MicrosoftGraphOptions(
+        tenant_id=tenant_id,
+        client_id=client_id,
+        client_secret=client_secret,
+        resource="sites/by_site_id/lists/by_list_id/items",
+        params={
+            "top": 1,
+            "expand": ["fields"]
+        }
+    )
+    resource_path = "sites/by_site_id/lists/by_list_id/items"
+    params = {
+        "site_id": "37d7dde8-0b6b-4b7c-a2fd-2e217f54a263",  # Actual site ID
+        "list_id": "5ecf26db-0161-4069-b763-856217415099",  # Actual list ID
+        "top": 5,
+        "expand": ["fields"]
+    }
+    fetcher = MicrosoftGraphFetcher(graph_client, resource_path, params)
+    async_gen = fetcher.fetch_data()
+    for row in AsyncToSyncIterator(async_gen):
+        print(row)
+
+
+if __name__ == "__main__":
+    main()

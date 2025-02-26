@@ -1,6 +1,9 @@
-import asyncio
+from typing import Union
 from pyspark.sql.datasource import DataSource, DataSourceReader
-from pyspark.sql.types import StructType, StringType
+from pyspark.sql.types import StructType
+from source_msgraph.async_interator import AsyncToSyncIterator
+from source_msgraph.msgraph_spark.client import iter_records
+from source_msgraph.msgraph_spark.options import MicrosoftGraphOptions
 
 # Reference https://learn.microsoft.com/en-us/azure/databricks/pyspark/datasources
 
@@ -9,6 +12,27 @@ class MSGraphDataSource(DataSource):
     """
 
     """
+    def __init__(self, options):
+        
+        # Extract query options
+        query_option_keys = {"top", "filter", "orderby", "expand", "select"}
+        query_options = {k: v for k, v in options.items() if k in query_option_keys}
+
+        # Filter out credentials and query options
+        resource_options = {
+            k: v for k, v in options.items()
+            if k not in {"tenant_id", "client_id", "client_secret", "resource_path"} and k not in query_option_keys
+        }
+
+        # Initialize MicrosoftGraphOptions
+        self.options = MicrosoftGraphOptions(
+            tenant_id=options["tenant_id"],
+            client_id=options["client_id"],
+            client_secret=options["client_secret"],
+            resource_path=options["resource_path"],
+            query_params=query_options,
+            resource_options=resource_options
+        )
 
     @classmethod
     def name(cls):
@@ -18,20 +42,20 @@ class MSGraphDataSource(DataSource):
         return "id string"
 
     def reader(self, schema: StructType):
-        return MSGraphDataSourceReader(schema, self.options)
+        return MSGraphDataSourceReader(self.options, schema)
 
 
 class MSGraphDataSourceReader(DataSourceReader):
 
-    def __init__(self, schema, options):
+    def __init__(self, options:MicrosoftGraphOptions, schema: Union[StructType, str]):
         self.schema: StructType = schema
-        self.options = options
-
+        self.options:MicrosoftGraphOptions = options
+        
     def read(self, partition):
-        from source_msgraph.graph import fetch_items_sync, graph_client, to_json
+        from source_msgraph.msgraph_spark.utils import to_json
         from pyspark.sql import Row
-        for item in fetch_items_sync(graph_client, "37d7dde8-0b6b-4b7c-a2fd-2e217f54a263", "5ecf26db-0161-4069-b763-856217415099", {"top":10}):
-            j = to_json(item)
+        for row in iter_records(self.schema, self.options):
+            j = to_json(row)
             yield Row(**{
                 "id": j.get("id", None)
             })
