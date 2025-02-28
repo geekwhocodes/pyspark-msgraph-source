@@ -30,6 +30,7 @@ grpcio = "^1.70.0"
 grpcio-status = "^1.60.1"
 pandas = "^2.2.0"
 ipykernel = "^6.29.5"
+markdown = "^3.7"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

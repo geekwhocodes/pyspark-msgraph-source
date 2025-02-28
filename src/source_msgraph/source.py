@@ -1,10 +1,10 @@
-from typing import Union
+from typing import Any, Dict, Union
 from pyspark.sql.datasource import DataSource, DataSourceReader
 from pyspark.sql.types import StructType
-from source_msgraph.async_interator import AsyncToSyncIterator
-from source_msgraph.msgraph_spark.client import iter_records
-from source_msgraph.msgraph_spark.options import MicrosoftGraphOptions
+from source_msgraph.client import get_resource_schema, iter_records
+from source_msgraph.models import ConnectorOptions
 
+from source_msgraph.resources import get_resource
 # Reference https://learn.microsoft.com/en-us/azure/databricks/pyspark/datasources
 
 
@@ -12,50 +12,49 @@ class MSGraphDataSource(DataSource):
     """
 
     """
-    def __init__(self, options):
+    def __init__(self, options: Dict[str, Any]):
+
+        tenant_id=options.pop("tenant_id")
+        client_id=options.pop("client_id")
+        client_secret=options.pop("client_secret")
         
-        # Extract query options
-        query_option_keys = {"top", "filter", "orderby", "expand", "select"}
-        query_options = {k: v for k, v in options.items() if k in query_option_keys}
+        resource_name = options.pop("resource")
+        if not resource_name:
+            raise ValueError("resource is missing, please provide a valid resource name.")
+        
+        resource = get_resource(resource_name).map_options_to_params(options)
 
-        # Filter out credentials and query options
-        resource_options = {
-            k: v for k, v in options.items()
-            if k not in {"tenant_id", "client_id", "client_secret", "resource_path"} and k not in query_option_keys
-        }
-
-        # Initialize MicrosoftGraphOptions
-        self.options = MicrosoftGraphOptions(
-            tenant_id=options["tenant_id"],
-            client_id=options["client_id"],
-            client_secret=options["client_secret"],
-            resource_path=options["resource_path"],
-            query_params=query_options,
-            resource_options=resource_options
+        self.connector_options: ConnectorOptions = ConnectorOptions(
+            tenant_id=tenant_id,
+            client_id=client_id,
+            client_secret=client_secret,
+            resource=resource
         )
+
 
     @classmethod
     def name(cls):
         return "msgraph"
 
     def schema(self):
-        return "id string"
+        print("getting aschema")
+        _, schema = get_resource_schema(self.connector_options)
+        return schema
 
     def reader(self, schema: StructType):
-        return MSGraphDataSourceReader(self.options, schema)
+        return MSGraphDataSourceReader(self.connector_options, schema)
 
 
 class MSGraphDataSourceReader(DataSourceReader):
 
-    def __init__(self, options:MicrosoftGraphOptions, schema: Union[StructType, str]):
+    def __init__(self, options: ConnectorOptions, schema: Union[StructType, str]):
         self.schema: StructType = schema
-        self.options:MicrosoftGraphOptions = options
+        self.options:ConnectorOptions = options
         
     def read(self, partition):
-        from source_msgraph.msgraph_spark.utils import to_json
+        from source_msgraph.utils import to_json
         from pyspark.sql import Row
-        for row in iter_records(self.schema, self.options):
-            j = to_json(row)
-            yield Row(**{
-                "id": j.get("id", None)
-            })
+        for row in iter_records(self.options):
+            row = to_json(row)
+            row_data = {f.name: row.get(f.name, None) for f in self.schema.fields}
+            yield Row(**row_data)
