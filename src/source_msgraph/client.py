@@ -2,9 +2,10 @@ from msgraph import GraphServiceClient
 from kiota_abstractions.base_request_configuration import RequestConfiguration
 from msgraph.generated.models.o_data_errors.o_data_error import ODataError
 from azure.identity import ClientSecretCredential
-from source_msgraph.async_interator import AsyncToSyncIterator, AsyncToSyncIteratorV2
+from source_msgraph.async_interator import AsyncToSyncIterator
 from source_msgraph.models import ConnectorOptions
 from source_msgraph.utils import get_python_schema, to_json, to_pyspark_schema
+from typing import Dict, Any
 
 class GraphClient:
     def __init__(self, options: ConnectorOptions):
@@ -48,7 +49,6 @@ class GraphClient:
             builder = self.options.resource.get_request_builder_cls()(self.graph_client.request_adapter, self.options.resource.resource_params)
             items = await builder.get(request_configuration=request_configuration)
             while True:
-                print("Page fetched....")
                 for item in items.value:
                     yield item
                 if not items.odata_next_link:
@@ -72,9 +72,7 @@ def iter_records(options: ConnectorOptions):
     async_gen = fetcher.fetch_data()
     return AsyncToSyncIterator(async_gen)
 
-import json
-from typing import Dict, Any
-from dataclasses import asdict
+
 
 def get_resource_schema(options: ConnectorOptions) -> Dict[str, Any]:
     """
@@ -89,7 +87,7 @@ def get_resource_schema(options: ConnectorOptions) -> Dict[str, Any]:
     async_gen = fetcher.fetch_data()
 
     try:
-        record = next(AsyncToSyncIteratorV2(async_gen), None)
+        record = next(AsyncToSyncIterator(async_gen), None)
         if not record:
             raise ValueError(f"No records found for resource: {options.resource.resource_name}")
         record = to_json(record)

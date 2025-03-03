@@ -4,7 +4,7 @@ import inspect
 import re
 from typing import Any, Dict
 from source_msgraph.constants import MSGRAPH_SDK_PACKAGE
-from urllib.parse import unquote, quote
+from urllib.parse import unquote
 from kiota_abstractions.base_request_builder import BaseRequestBuilder
 
 @dataclass
@@ -133,8 +133,9 @@ class BaseResource:
         if missing_params:
             raise ValueError(f"Missing required resource parameters: {', '.join(missing_params)}")
 
+        # TODO: add max $top value validation.
+
         mapped_query_params = {"%24"+k: v for k, v in options.items() if k in self.query_params}
-        
         mapped_resource_params = {k.replace("-", "%2D"): v for k, v in options.items() if k in self.resource_params}
         
         invalid_params = {k: v for k, v in options.items() if k not in self.query_params and k not in self.resource_params}

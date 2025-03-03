@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, Union
 from pyspark.sql.datasource import DataSource, DataSourceReader
 from pyspark.sql.types import StructType
@@ -7,6 +8,7 @@ from source_msgraph.models import ConnectorOptions
 from source_msgraph.resources import get_resource
 # Reference https://learn.microsoft.com/en-us/azure/databricks/pyspark/datasources
 
+logger = logging.getLogger(__name__)
 
 class MSGraphDataSource(DataSource):
     """
@@ -37,8 +39,9 @@ class MSGraphDataSource(DataSource):
         return "msgraph"
 
     def schema(self):
-        print("getting aschema")
+        logger.info("Schema not provided, infering from the source.")
         _, schema = get_resource_schema(self.connector_options)
+        logger.debug(f"Infered schema : {schema}")
         return schema
 
     def reader(self, schema: StructType):
