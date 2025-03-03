@@ -4,7 +4,7 @@
         "dockerfile": "Dockerfile",
         "context": "."
     },
-    "postStartCommand": "bash -i /workspace/scripts/init-env.sh",
+    // "postStartCommand": "bash -i /workspace/scripts/init-env.sh",
     "customizations": {
         "vscode": {
             "extensions": [
