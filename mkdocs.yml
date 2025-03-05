@@ -13,6 +13,9 @@ plugins:
 
 nav:
   - Home: index.md
+  - Guides:
+      - List Items: guides/list-items.md
+  - Available Resource: api/resources/index.md
   - API Reference:
       - Overview: api/index.md
       - Core:
@@ -22,3 +25,5 @@ nav:
           - Models: api/core/models.md
           - Async Iterator: api/core/async-iterator.md
           - Utils: api/core/utils.md
+      - Resources: 
+        - List Items: api/resources/list-items.md
