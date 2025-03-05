@@ -14,7 +14,7 @@ This guide explains how to read **List Items** from a **SharePoint List** using 
 
 ---
 
-## 🔹 Supported Options for `list_items`
+## Supported Options for `list_items`
 
 | Option       | Description                                               | Required |
 |--------------|-----------------------------------------------------------|----------|

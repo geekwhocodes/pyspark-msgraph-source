@@ -82,6 +82,20 @@ df = spark.read.format("msgraph") \
 .load()
 
 df.show()
+
+# with schema
+
+df = spark.read.format("msgraph") \ 
+.option("resource", "list_items") \ 
+.option("site-id", "<YOUR_SITE_ID>") \ 
+.option("list-id", "<YOUR_LIST_ID>") \ 
+.option("top", 100) \ 
+.option("expand", "fields") \ 
+.schema("id string, Title string")
+.load()
+
+df.show()
+
 ```
 
 ---

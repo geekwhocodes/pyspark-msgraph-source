@@ -13,6 +13,7 @@ plugins:
 
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
   - Guides:
       - List Items: guides/list-items.md
   - Available Resource: api/resources/index.md
