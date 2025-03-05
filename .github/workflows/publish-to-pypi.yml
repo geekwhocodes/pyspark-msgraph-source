@@ -5,7 +5,7 @@ on:
 
 jobs:
   test:
-    if: startsWith(github.ref, 'refs/heads/v')
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
