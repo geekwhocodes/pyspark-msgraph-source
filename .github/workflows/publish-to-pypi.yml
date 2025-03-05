@@ -2,20 +2,25 @@ name: Test and Publish to PyPI
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (must start with v*)'
+        required: true
 
 jobs:
   test:
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
       - name: Install Poetry and dependencies
         run: |
@@ -27,13 +32,14 @@ jobs:
         run: poetry run pytest
 
   publish:
-    if: startsWith(github.ref, 'refs/heads/v')
     needs: test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
