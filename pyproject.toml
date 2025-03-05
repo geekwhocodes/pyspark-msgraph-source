@@ -1,11 +1,13 @@
 [project]
-name = "source-msgraph"
+name = "pyspark_msgraph_source"
 version = "0.1.0"
-description = ""
+description = "Pyspark custom data source for Microsoft Graph APIs, including path and query parameters, with PySpark read examples."
 authors = [
     {name = "geekwhocodes",email = "ganeshraskar@outlook.com"}
 ]
 readme = "README.md"
+homepage = "https://github.com/geekwhocodes/pyspark-msgraph-source"
+repository = "https://github.com/geekwhocodes/pyspark-msgraph-source"
 requires-python = ">=3.12,<4"
 dependencies = [
     "pyspark (==4.0.0.dev2)",
@@ -15,7 +17,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "source_msgraph", from = "src"}]
+packages = [{include = "pyspark_msgraph_source", from = "src"}]
 
 [tool.poetry.extras]
 list_items= []
