@@ -1,13 +1,12 @@
 name: Publish to Test PyPI
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       publish_to_testpypi:
         description: "Publish to Test PyPI?"
         required: true
-        default: "false"
+        default: "true"
         type: choice
         options:
           - "true"
