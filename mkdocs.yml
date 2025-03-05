@@ -1,0 +1,30 @@
+site_name: PySpark MSGraph Source
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["src/"]
+          options:
+            show_source: false
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Guides:
+      - List Items: guides/list-items.md
+  - Available Resource: api/resources/index.md
+  - API Reference:
+      - Overview: api/index.md
+      - Core:
+          - Source: api/core/source.md
+          - Base Client: api/core/client.md
+          - Resource Provider: api/core/resource-provider.md
+          - Models: api/core/models.md
+          - Async Iterator: api/core/async-iterator.md
+          - Utils: api/core/utils.md
+      - Resources: 
+        - List Items: api/resources/list-items.md

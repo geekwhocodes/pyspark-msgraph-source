@@ -1,6 +1,6 @@
 import pytest
 from pyspark.sql import SparkSession
-from source_msgraph.source import FakeDataSource
+from source_pyspark_msgraph.source import FakeDataSource
 
 
 # @pytest.fixture
