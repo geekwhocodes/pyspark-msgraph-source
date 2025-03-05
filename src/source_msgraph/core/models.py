@@ -3,7 +3,7 @@ import importlib
 import inspect
 import re
 from typing import Any, Dict
-from source_msgraph.constants import MSGRAPH_SDK_PACKAGE
+from source_msgraph.core.constants import MSGRAPH_SDK_PACKAGE
 from urllib.parse import unquote
 from kiota_abstractions.base_request_builder import BaseRequestBuilder
 
@@ -157,7 +157,6 @@ class ConnectorOptions:
     tenant_id: str
     client_id: str
     client_secret: str
-    resource: BaseResource
     def __post_init__(self):
         ...
         
