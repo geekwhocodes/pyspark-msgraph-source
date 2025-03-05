@@ -1,9 +1,17 @@
 name: Publish to Test PyPI
 
 on:
-    push:
-      branches:
-        - 'feature/sub-package'
+  push:
+  workflow_dispatch:
+    inputs:
+      publish_to_testpypi:
+        description: "Publish to Test PyPI?"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 jobs:
   test-and-publish:
@@ -16,23 +24,30 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
-      - name: Install Poetry
+      - name: Install Poetry and dependencies
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: poetry install
+          poetry install
 
       - name: Run tests
         run: poetry run pytest
+
+      - name: Extract version from pyproject.toml
+        id: get_version
+        run: |
+          echo "VERSION=$(poetry version --short)" >> $GITHUB_ENV
+
+      - name: Show extracted version
+        run: echo "Publishing version $VERSION"
 
       - name: Build the package
         run: poetry build
 
       - name: Publish to Test PyPI
+        if: ${{ github.event.inputs.publish_to_testpypi == 'true' }}
         env:
           POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.TEST_PYPI_TOKEN }}
         run: |
