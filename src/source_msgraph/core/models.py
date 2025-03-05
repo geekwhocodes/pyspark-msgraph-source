@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import importlib
 import inspect
+import logging
 import re
 from typing import Any, Dict
 from source_msgraph.core.constants import MSGRAPH_SDK_PACKAGE
@@ -134,6 +135,8 @@ class BaseResource:
             raise ValueError(f"Missing required resource parameters: {', '.join(missing_params)}")
 
         # TODO: add max $top value validation.
+        if int(options.get("top", 1)) <= 100:
+            logging.warning("Setting a low `top` value in Microsoft Graph queries can cause high latency and increase throttling risk.")
 
         mapped_query_params = {"%24"+k: v for k, v in options.items() if k in self.query_params}
         mapped_resource_params = {k.replace("-", "%2D"): v for k, v in options.items() if k in self.resource_params}
@@ -147,6 +150,8 @@ class BaseResource:
         self.resource_params = mapped_resource_params
         
         return self
+    
+
 
 GUID_PATTERN = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 

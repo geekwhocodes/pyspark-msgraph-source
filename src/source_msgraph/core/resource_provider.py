@@ -4,7 +4,7 @@ import pkgutil
 from typing import Dict, Type
 from source_msgraph.core.base_client import BaseResourceProvider
 
-
+# @lru_cache(maxsize=10)
 def load_resource_providers() -> Dict[str, Type[BaseResourceProvider]]:
     """
     Dynamically loads all resource providers from the resources package
@@ -15,13 +15,10 @@ def load_resource_providers() -> Dict[str, Type[BaseResourceProvider]]:
     # Import the resources package
     resources_pkg = importlib.import_module(package)
     
-    # Iterate through all submodules
     for _, name, _ in pkgutil.iter_modules(resources_pkg.__path__):
         if name != 'base':  # Skip the base module
             try:
-                # Import the module
                 module = importlib.import_module(f'{package}.{name}')
-                # Look for *ResourceProvider class
                 for attr_name in dir(module):
                     if attr_name.endswith('ResourceProvider'):
                         provider_class = getattr(module, attr_name)
@@ -32,13 +29,14 @@ def load_resource_providers() -> Dict[str, Type[BaseResourceProvider]]:
             except ImportError as e:
                 print(f"Warning: Could not load resource provider {name}: {e}")
     
-    return providers
+    return frozenset(providers.items())
 
-def get_resource_provider(resource_name: str, options: Dict[str, str]) -> BaseResourceProvider:
+# @lru_cache(maxsize=10)
+def get_resource_provider(resource_name: str, options: frozenset) -> BaseResourceProvider:
     """
     Factory method to get the appropriate resource provider
     """
-    providers = load_resource_providers()
+    providers = dict(load_resource_providers())
     provider_class: BaseResourceProvider = providers.get(resource_name)
     
     if not provider_class:
@@ -47,4 +45,4 @@ def get_resource_provider(resource_name: str, options: Dict[str, str]) -> BaseRe
             f"Unsupported resource name: '{resource_name}'. "
             f"Available resources: {available}"
         )
-    return provider_class(options)
+    return provider_class(dict(options))

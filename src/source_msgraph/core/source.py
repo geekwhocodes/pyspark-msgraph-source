@@ -19,7 +19,7 @@ class MSGraphDataSource(DataSource):
         self.resource_name = options.pop("resource")
         if not self.resource_name:
             raise ValueError("resource is missing, please provide a valid resource name.")
-        self.options = options
+        self.options = frozenset(options.items())
         
     @classmethod
     def name(cls):
@@ -38,7 +38,7 @@ class MSGraphDataSource(DataSource):
 
 class MSGraphDataSourceReader(DataSourceReader):
 
-    def __init__(self, resource_name :str, options: Dict[str, Any], schema: Union[StructType, str]):
+    def __init__(self, resource_name :str, options: frozenset, schema: Union[StructType, str]):
         self.schema: StructType = schema
         self.options = options
         self.resource_name = resource_name
