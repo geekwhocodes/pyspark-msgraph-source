@@ -1,4 +1,4 @@
-site_name: Pyspark MSGraph Source
+site_name: PySpark MSGraph Source
 theme:
   name: material
 
@@ -7,12 +7,18 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: ["src/"]  # or wherever your package code is
+          paths: ["src/"]
           options:
-            show_source: true
+            show_source: false
 
 nav:
   - Home: index.md
   - API Reference:
       - Overview: api/index.md
-      - Core: api/core.md
+      - Core:
+          - Source: api/core/source.md
+          - Base Client: api/core/client.md
+          - Resource Provider: api/core/resource-provider.md
+          - Models: api/core/models.md
+          - Async Iterator: api/core/async-iterator.md
+          - Utils: api/core/utils.md

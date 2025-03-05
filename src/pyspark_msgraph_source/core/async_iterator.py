@@ -9,6 +9,8 @@ from typing import AsyncGenerator, Iterator, Any
 class AsyncToSyncIterator:
     """
     Converts an async generator into a synchronous iterator while ensuring proper event loop handling.
+    
+    This is required because Microsoft Graph SDK for Python(https://github.com/microsoftgraph/msgraph-sdk-python) is async first.
     """
 
     def __init__(self, async_gen: AsyncGenerator[Any, None]):
