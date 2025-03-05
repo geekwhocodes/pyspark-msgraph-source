@@ -1,11 +1,9 @@
 name: Test and Publish to PyPI
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag to release (must start with v*)'
-        required: true
+  push:
+    tags:
+      - 'v*'  # triggers only when pushing tags starting with 'v'
 
 jobs:
   test:
@@ -14,13 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.tag }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install Poetry and dependencies
         run: |
@@ -38,13 +34,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.tag }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install Poetry and dependencies
         run: |
