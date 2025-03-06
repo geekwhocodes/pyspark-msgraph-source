@@ -1,6 +1,6 @@
 [project]
 name = "pyspark_msgraph_source"
-version = "0.2.0"
+version = "0.3.0"
 description = "Pyspark custom data source for Microsoft Graph APIs, including path and query parameters, with PySpark read examples."
 authors = [
     {name = "geekwhocodes",email = "ganeshraskar@outlook.com"}
