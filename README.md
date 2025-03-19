@@ -1,8 +1,10 @@
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)
+![PyPI - Version](https://img.shields.io/pypi/v/pyspark_msgraph_source)
+
+[![Tests](https://github.com/geekwhocodes/pyspark-msgraph-source/actions/workflows/publish-to-pypi.yml/badge.svg?branch=main)](https://github.com/geekwhocodes/pyspark-msgraph-source/actions/workflows/publish-to-pypi.yml)
 
 # PySpark Microsoft Graph Source
-
-
-
 
 A **PySpark DataSource** to seamlessly integrate and read data from **Microsoft Graph API**, enabling easy access to resources like **SharePoint List Items**, and more.
 
