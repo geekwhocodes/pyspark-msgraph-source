@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)
 ![PyPI - Version](https://img.shields.io/pypi/v/pyspark_msgraph_source)
 ![GitHub license](https://img.shields.io/github/license/geekwhocodes/pyspark-msgraph-source)
