@@ -1,8 +1,10 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)
-![PyPI - Version](https://img.shields.io/pypi/v/pyspark_msgraph_source)
+[![PyPI - Version](https://img.shields.io/pypi/v/pyspark_msgraph_source)](https://pypi.org/project/pyspark_msgraph_source/)
 ![GitHub license](https://img.shields.io/github/license/geekwhocodes/pyspark-msgraph-source)
 [![Test and Publish to PyPI](https://github.com/geekwhocodes/pyspark-msgraph-source/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/geekwhocodes/pyspark-msgraph-source/actions/workflows/publish-to-pypi.yml)
+
+
 
 
 
